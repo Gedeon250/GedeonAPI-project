@@ -3,14 +3,28 @@
 // #1 - Initialize Agora RTC Client
 const client = AgoraRTC.createClient({mode: 'rtc', codec: 'vp8'});
 
-// #2 - Configuration object with demo mode support
+// #2 - Configuration object - AGORA SETUP
 const config = {
-    appid: '5a0fbb96ac9d41f6bb111b397a5f1930', // Replace with your valid app id from agora.io
-    token: '007eJxTYFA9a9T7fO9FjYj8jTOuhCxZYPRzw935Rhp5SVaub9nV73YoMJgmGqQlJVmaJSZbppgYppklJRkaGiYZW5onmqYZWhobmOrXZTQEMjKsquNgYmSAQBCfk6EsMyU1PzkxJ4eBAQAoGiFN', // Replace with your valid token from agora.io
-    uid: null,
-    channel: 'videocall', // Channel that you used to generate channel id
-    demoMode: false, // Set to true to enable demo mode without Agora
+    // Your Agora App ID (Free tier: 10,000 minutes per month)
+    appid: '5a0fbb96ac9d41f6bb111b397a5f1930',
+    
+    // Token: Generated from Agora Console for channel 'test-channel'
+    // This token will expire in 24 hours - generate a new one when needed
+    token: '007eJxTYNjLkbfmu8w6s+bzBod+vva2XThHxHX/wml3b5nGLtLaIZemwGCaaJCWlGRplphsmWJimGaWlGRoaJhkbGmeaJpmaGlskFJfl9EQyMhwSWs+AyMUgvg8DCWpxSW6yRmJeXmpOQwMALWcI2g=',
+    
+    uid: null, // Will be set from username input
+    channel: 'test-channel', // You can change this channel name
+    demoMode: false, // Will auto-enable if credentials are invalid
 };
+
+// Instructions for getting FREE Agora credentials:
+// 1. Go to https://console.agora.io/
+// 2. Sign up for a FREE account
+// 3. Create a new project
+// 4. Get your App ID from the project dashboard
+// 5. Replace 'YOUR_FREE_APP_ID_HERE' with your actual App ID
+// 6. For testing: leave token as null
+// 7. For production: generate a temporary token in the Agora console
 
 // Demo mode flag - automatically enabled if Agora credentials fail
 let isDemoMode = false;
@@ -60,10 +74,20 @@ document.getElementById('join-btn').addEventListener('click', async () => {
     } catch (error) {
         console.error('Failed to join stream:', error);
         
-        // Check if it's a credential error and enable demo mode
-        if (error.message && error.message.includes('invalid vendor key')) {
+        // Check for different types of credential errors and enable demo mode
+        if (error.message && (
+            error.message.includes('invalid vendor key') ||
+            error.message.includes('dynamic use static key') ||
+            error.message.includes('CAN_NOT_GET_GATEWAY_SERVER')
+        )) {
             isDemoMode = true;
-            showNotification('Invalid Agora credentials - Running in demo mode', 'error');
+            
+            if (error.message.includes('dynamic use static key')) {
+                showNotification('Token required! Generate a token from Agora Console - Running in demo mode', 'error');
+            } else {
+                showNotification('Invalid Agora credentials - Running in demo mode', 'error');
+            }
+            
             startDemoMode();
             toggleUI('call');
         } else {
@@ -225,8 +249,9 @@ function showDemoModeIndicator() {
                 font-family: var(--font-primary);
                 font-size: 0.9rem;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            ">
-                🔧 DEMO MODE - Video calling disabled (Invalid Agora credentials)
+                cursor: pointer;
+            " onclick="window.open('https://console.agora.io/', '_blank')">
+                🆓 DEMO MODE - Click here to get FREE Agora credentials (10,000 min/month)
             </div>
         `;
         document.body.appendChild(demoIndicator);
@@ -309,10 +334,16 @@ function startDemoMode() {
             </p>
             <div class="video-player player demo-player" id="stream-${config.uid}">
                 <div class="demo-content">
-                    <div class="demo-avatar">🎥</div>
-                    <p>Demo Mode</p>
-                    <p>Video calling requires valid Agora.io credentials</p>
-                    <p>Visit <a href="https://console.agora.io/" target="_blank" rel="noopener noreferrer">console.agora.io</a> to get credentials</p>
+                    <div class="demo-avatar">🆓</div>
+                    <h3>Demo Mode Active</h3>
+                    <p><strong>Get FREE Agora credentials!</strong></p>
+                    <p>✅ 10,000 minutes/month FREE</p>
+                    <p>✅ No credit card required</p>
+                    <p>✅ 5 minutes to setup</p>
+                    <a href="https://console.agora.io/" target="_blank" rel="noopener noreferrer" class="demo-link">
+                        🚀 Get Free Credentials Now
+                    </a>
+                    <p class="demo-small">Then update your App ID in script.js</p>
                 </div>
             </div>
         </div>
@@ -337,11 +368,12 @@ function addDemoStyles() {
         demoStyles.id = 'demo-styles';
         demoStyles.textContent = `
             .demo-container {
-                border: 2px dashed #ff6b6b;
+                border: 3px dashed #00b894;
+                background: rgba(0, 184, 148, 0.1);
             }
             
             .demo-player {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -351,27 +383,54 @@ function addDemoStyles() {
             
             .demo-content {
                 padding: 2rem;
+                max-width: 400px;
+            }
+            
+            .demo-content h3 {
+                margin: 1rem 0;
+                font-size: 1.5rem;
+                color: #fff;
             }
             
             .demo-avatar {
-                font-size: 3rem;
+                font-size: 4rem;
                 margin-bottom: 1rem;
-                animation: pulse 2s infinite;
+                animation: bounce 2s infinite;
             }
             
             .demo-content p {
                 margin: 0.5rem 0;
+                font-size: 1rem;
             }
             
-            .demo-content a {
-                color: #fff;
-                text-decoration: underline;
+            .demo-link {
+                display: inline-block;
+                background: #fff;
+                color: #00b894;
+                padding: 0.8rem 1.5rem;
+                text-decoration: none;
+                border-radius: 25px;
+                font-weight: bold;
+                margin: 1rem 0;
+                transition: transform 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             }
             
-            @keyframes pulse {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.1); }
-                100% { transform: scale(1); }
+            .demo-link:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            }
+            
+            .demo-small {
+                font-size: 0.8rem;
+                opacity: 0.9;
+                font-style: italic;
+            }
+            
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+                40% { transform: translateY(-10px); }
+                60% { transform: translateY(-5px); }
             }
         `;
         document.head.appendChild(demoStyles);
