@@ -109,9 +109,21 @@ Email: [j.nishimwe@alustudent.com](mailto:j.nishimwe@alustudent.com)
 
 		***RUN THIS PROJECT*** 
 
- git clone  [https://github.com/josep-prog/Video\_call\_project.git](https://github.com/josep-prog/Video_call_project.git)  
-cd Video\_call\_project  
-Drop index.html file into browser
+**Local Development:**
+```bash
+git clone [https://github.com/josep-prog/Video_call_project.git](https://github.com/josep-prog/Video_call_project.git)
+cd Video_call_project
+# Open index.html in your browser
+```
+
+**Production Deployment:**
+For detailed deployment instructions to web servers and load balancer configuration, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+**Quick deployment summary:**
+1. Deploy application files to Web01 and Web02 servers
+2. Configure Nginx load balancer on Lb01
+3. Test load balancing and application functionality
+4. Monitor and maintain servers
 
 ***Integrating Real-Time Video Call Features in Hospital Quick: Bridging Innovation and Accessibility***
 

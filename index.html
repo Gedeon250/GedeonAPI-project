@@ -13,44 +13,51 @@
 </head>
 <body>
 
-    <main>
-
-     
-
-
-        <!-- <div id="users-list"></div> -->
-
-        <h1 id="site-title">Video Call</h1>
-        <div id="join-wrapper">
-            <input id="username" type="text" placeholder="Enter your name..." />
-            <button id="join-btn">Join Stream</button>
-        </div>
-        <div id="user-streams" ></div>
+    <main role="main" aria-label="Video Call Application">
+        <!-- Main application header -->
+        <h1 id="site-title" aria-level="1">Video Call</h1>
         
-
-
-        <!-- Wrapper for join button -->
-        <div id="footer">
-            <div class="icon-wrapper">
-                <img class="control-icon" id="camera-btn" src="./assets/video.svg" />
-                <p>Cam</p>
-            </div>
-
-            <div class="icon-wrapper">
-                <img class="control-icon" id="mic-btn" src="./assets/microphone.svg" />
-                <p>Mic</p>
-            </div>
-
-            <div class="icon-wrapper">
-                <img class="control-icon" id="leave-btn" src="./assets/leave.svg" />
-                <p>Leave</p>
-            </div>
-            
-           
-            
-            
+        <!-- Join form section -->
+        <div id="join-wrapper" role="form" aria-label="Join video call form">
+            <label for="username" class="sr-only">Enter your name</label>
+            <input 
+                id="username" 
+                type="text" 
+                placeholder="Enter your name..." 
+                aria-required="true"
+                aria-describedby="username-help"
+                maxlength="50"
+                autocomplete="username"
+            />
+            <div id="username-help" class="sr-only">Enter your name to join the video call (2-50 characters, letters, numbers, spaces, hyphens, and underscores only)</div>
+            <button 
+                id="join-btn" 
+                type="button" 
+                aria-describedby="join-help"
+            >Join Stream</button>
+            <div id="join-help" class="sr-only">Click to join the video call with the entered name</div>
         </div>
+        
+        <!-- Video streams container -->
+        <div id="user-streams" role="region" aria-label="Video streams" aria-live="polite"></div>
+        
+        <!-- Control buttons footer -->
+        <div id="footer" role="toolbar" aria-label="Call controls">
+            <div class="icon-wrapper" role="button" tabindex="0" aria-label="Toggle camera">
+                <img class="control-icon" id="camera-btn" src="./assets/video.svg" alt="Camera control" />
+                <p aria-hidden="true">Cam</p>
+            </div>
 
+            <div class="icon-wrapper" role="button" tabindex="0" aria-label="Toggle microphone">
+                <img class="control-icon" id="mic-btn" src="./assets/microphone.svg" alt="Microphone control" />
+                <p aria-hidden="true">Mic</p>
+            </div>
+
+            <div class="icon-wrapper" role="button" tabindex="0" aria-label="Leave call">
+                <img class="control-icon" id="leave-btn" src="./assets/leave.svg" alt="Leave call" />
+                <p aria-hidden="true">Leave</p>
+            </div>
+        </div>
     </main>
 
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
