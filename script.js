@@ -75,6 +75,14 @@ async function fetchToken(channelName, uid) {
         }
     } catch (error) {
         console.error('❌ Error fetching token:', error);
+        console.log('🔄 Trying fallback token generation...');
+        
+        // Fallback: Try to use null token for testing (works with some Agora projects)
+        if (error.message.includes('Failed to fetch')) {
+            showNotification('Token server unavailable. Trying fallback mode...', 'info');
+            return null; // Return null to try tokenless connection
+        }
+        
         showNotification('Failed to fetch token from server. Please check your connection.', 'error');
         throw error;
     }
@@ -563,8 +571,10 @@ const joinStreams = async () => {
             AgoraRTC.createCameraVideoTrack()
         ]);
         
-        // Start automatic token refresh
-        startTokenRefresh();
+        // Start automatic token refresh (only if we have a token with expiration)
+        if (config.token && tokenExpirationTime) {
+            startTokenRefresh();
+        }
         
         showNotification('Successfully joined the call!', 'success');
     } catch (err) {
