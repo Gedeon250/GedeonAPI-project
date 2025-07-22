@@ -3,19 +3,89 @@
 // #1 - Initialize Agora RTC Client
 const client = AgoraRTC.createClient({mode: 'rtc', codec: 'vp8'});
 
-// #2 - Configuration object - AGORA SETUP
+// #2 - Configuration object - AGORA SETUP with AUTO TOKEN
 const config = {
     // Your Agora App ID (Free tier: 10,000 minutes per month)
     appid: '5a0fbb96ac9d41f6bb111b397a5f1930',
     
-    // Token: Generated from Agora Console for channel 'test-channel'
-    // This token will expire in 24 hours - generate a new one when needed
-    token: '007eJxTYNjLkbfmu8w6s+bzBod+vva2XThHxHX/wml3b5nGLtLaIZemwGCaaJCWlGRplphsmWJimGaWlGRoaJhkbGmeaJpmaGlskFJfl9EQyMhwSWs+AyMUgvg8DCWpxSW6yRmJeXmpOQwMALWcI2g=',
+    // Token: Will be fetched automatically from server
+    token: null,
     
     uid: null, // Will be set from username input
-    channel: 'test-channel', // You can change this channel name
+    channel: 'videocall', // You can change this channel name
+    tokenServerUrl: 'http://localhost:3000', // Token server URL
     demoMode: false, // Will auto-enable if credentials are invalid
 };
+
+// Token management
+let tokenExpirationTime = null;
+let tokenRefreshTimeout = null;
+
+/**
+ * Fetch a new token from the server
+ */
+async function fetchToken(channelName, uid) {
+    try {
+        console.log(`Fetching token for channel: ${channelName}, uid: ${uid}`);
+        
+        const response = await fetch(`${config.tokenServerUrl}/generate-token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                channelName: channelName, 
+                uid: uid 
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            console.log('✅ Token fetched successfully');
+            tokenExpirationTime = data.expiresAt * 1000; // Convert to milliseconds
+            return data.token;
+        } else {
+            throw new Error(data.error || 'Failed to fetch token');
+        }
+    } catch (error) {
+        console.error('❌ Error fetching token:', error);
+        showNotification('Failed to fetch token. Make sure token server is running on port 3000.', 'error');
+        throw error;
+    }
+}
+
+/**
+ * Start automatic token refresh
+ */
+function startTokenRefresh() {
+    // Clear existing timeout
+    if (tokenRefreshTimeout) {
+        clearTimeout(tokenRefreshTimeout);
+    }
+    
+    // Refresh token 5 minutes before it expires
+    const refreshTime = tokenExpirationTime - Date.now() - (5 * 60 * 1000);
+    
+    if (refreshTime > 0) {
+        tokenRefreshTimeout = setTimeout(async () => {
+            try {
+                console.log('🔄 Refreshing token...');
+                const newToken = await fetchToken(config.channel, config.uid);
+                await client.renewToken(newToken);
+                config.token = newToken;
+                startTokenRefresh(); // Schedule next refresh
+                showNotification('Token refreshed automatically', 'success');
+            } catch (error) {
+                console.error('❌ Failed to refresh token:', error);
+                showNotification('Failed to refresh token', 'error');
+            }
+        }, refreshTime);
+    }
+}
 
 // Instructions for getting FREE Agora credentials:
 // 1. Go to https://console.agora.io/
@@ -459,13 +529,20 @@ const joinStreams = async () => {
 
     // Initialize local user tracks
     try {
+        // Fetch token first
+        showNotification('Getting authentication token...', 'info');
+        config.token = await fetchToken(config.channel, config.uid);
+        
         showNotification('Initializing camera and microphone...', 'info');
         
         [config.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
-            client.join(config.appid, config.channel, config.token || null, config.uid || null),
+            client.join(config.appid, config.channel, config.token, config.uid),
             AgoraRTC.createMicrophoneAudioTrack(),
             AgoraRTC.createCameraVideoTrack()
         ]);
+        
+        // Start automatic token refresh
+        startTokenRefresh();
         
         showNotification('Successfully joined the call!', 'success');
     } catch (err) {

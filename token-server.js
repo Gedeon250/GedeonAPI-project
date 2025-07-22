@@ -2,7 +2,7 @@
 /* This server automatically generates Agora tokens on-demand */
 
 const express = require('express');
-const { RtcTokenBuilder, RtcRole } = require('agora-access-token');
+const { RtcTokenBuilder, RtcRole } = require('agora-token');
 const cors = require('cors');
 
 const app = express();
