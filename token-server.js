@@ -13,9 +13,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Serve static files (HTML, CSS, JS, assets)
-app.use(express.static(path.join(__dirname)));
-
 // SECURITY NOTE: In production, use environment variables
 const APP_ID = '5a0fbb96ac9d41f6bb111b397a5f1930'; // Your App ID
 const APP_CERTIFICATE = '01469a3863384e53bb88a91ee60fb0a4'; // Primary App Certificate
@@ -127,6 +124,15 @@ app.get('/debug-token', (req, res) => {
         });
     }
 });
+
+// API catch-all for debugging
+app.all('/api/*', (req, res) => {
+    console.log('🚨 Unknown API route:', req.method, req.path);
+    res.status(404).json({ error: 'API endpoint not found', path: req.path, method: req.method });
+});
+
+// Serve static files AFTER all API routes (HTML, CSS, JS, assets)
+app.use(express.static(path.join(__dirname)));
 
 app.listen(PORT, () => {
     console.log(`Agora Token Server running on port ${PORT}`);
