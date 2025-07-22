@@ -4,6 +4,7 @@
 const express = require('express');
 const { RtcTokenBuilder, RtcRole } = require('agora-token');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +12,9 @@ const PORT = process.env.PORT || 3000;
 // Enable CORS and JSON parsing
 app.use(cors());
 app.use(express.json());
+
+// Serve static files (HTML, CSS, JS, assets)
+app.use(express.static(path.join(__dirname)));
 
 // SECURITY NOTE: In production, use environment variables
 const APP_ID = '5a0fbb96ac9d41f6bb111b397a5f1930'; // Your App ID

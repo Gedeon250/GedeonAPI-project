@@ -13,7 +13,7 @@ const config = {
     
     uid: null, // Will be set from username input
     channel: 'videocall', // You can change this channel name
-    tokenServerUrl: 'http://localhost:3000', // Token server URL
+    tokenServerUrl: window.location.origin, // Use same origin as the webpage
     demoMode: false, // Will auto-enable if credentials are invalid
 };
 
@@ -53,7 +53,7 @@ async function fetchToken(channelName, uid) {
         }
     } catch (error) {
         console.error('❌ Error fetching token:', error);
-        showNotification('Failed to fetch token. Make sure token server is running on port 3000.', 'error');
+        showNotification('Failed to fetch token from server. Please check your connection.', 'error');
         throw error;
     }
 }
