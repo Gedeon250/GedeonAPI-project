@@ -1,5 +1,27 @@
 /* ===== VIDEO CALL APPLICATION ===== */
 
+/**
+ * Get the appropriate token server URL based on environment
+ * @returns {string} Token server URL
+ */
+function getTokenServerUrl() {
+    // Check if running in file:// protocol (opening HTML directly)
+    if (window.location.protocol === 'file:') {
+        console.log('🔧 Running in file:// mode, using localhost');
+        return 'http://localhost:3000';
+    }
+    
+    // Check if running on localhost with a port (development)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('🔧 Running on localhost, using localhost:3000');
+        return 'http://localhost:3000';
+    }
+    
+    // Production or deployed environment - use same origin
+    console.log('🚀 Running in production, using same origin:', window.location.origin);
+    return window.location.origin;
+}
+
 // #1 - Initialize Agora RTC Client
 const client = AgoraRTC.createClient({mode: 'rtc', codec: 'vp8'});
 
@@ -13,7 +35,7 @@ const config = {
     
     uid: null, // Will be set from username input
     channel: 'videocall', // You can change this channel name
-    tokenServerUrl: window.location.origin, // Use same origin as the webpage
+    tokenServerUrl: getTokenServerUrl(), // Get appropriate server URL
     demoMode: false, // Will auto-enable if credentials are invalid
 };
 
