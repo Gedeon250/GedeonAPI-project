@@ -1,6 +1,6 @@
 # Quick Token Setup Guide
 
-## 🚨 Fix "dynamic use static key" Error
+## Fix "dynamic use static key" Error
 
 Your App ID `5a0fbb96ac9d41f6bb111b397a5f1930` is configured to require a token. Here's how to generate one quickly:
 
@@ -44,7 +44,7 @@ const config = {
 };
 ```
 
-## ⚠️ Important Notes
+##  Important Notes
 
 ### Token Expiration
 - Tokens expire! The one you generate will work for the time period you set (e.g., 24 hours)
@@ -52,18 +52,18 @@ const config = {
 - For production apps, you'd typically generate tokens dynamically on your server
 
 ### Free Tier Benefits
-- ✅ 10,000 minutes per month FREE
-- ✅ No credit card required
-- ✅ Full features available
+- 10,000 minutes per month FREE
+-  No credit card required
+-  Full features available
 
-## 🔧 Testing Steps
+##  Testing Steps
 
 1. Generate and paste your token in `script.js`
 2. Save the file
 3. Refresh your browser (Ctrl+F5 or Cmd+Shift+R)
 4. Try joining the call again
 
-## 🆘 If You Still Have Issues
+##  If You Still Have Issues
 
 1. **Double-check the token** - Make sure it's pasted correctly with no extra spaces
 2. **Check channel name** - Must match exactly (`test-channel`)

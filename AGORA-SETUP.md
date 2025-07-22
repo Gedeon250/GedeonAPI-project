@@ -1,6 +1,6 @@
 # Free Agora Setup Guide
 
-## 🆓 Getting Started with Agora's Free Tier
+## Getting Started with Agora's Free Tier
 
 Agora provides **10,000 minutes per month for FREE** - perfect for development and small projects!
 
@@ -49,7 +49,7 @@ const config = {
 };
 ```
 
-## 📝 Quick Configuration Example
+## Quick Configuration Example
 
 After getting your credentials, update `script.js`:
 
@@ -63,13 +63,13 @@ const config = {
 };
 ```
 
-## 🎯 Free Tier Limits
+## Free Tier Limits
 - **10,000 minutes/month** of video calling
 - **Unlimited** concurrent users
 - **Global** infrastructure
 - **No credit card required**
 
-## 🔧 Testing Your Setup
+##  Testing Your Setup
 
 1. Replace the App ID in `script.js`
 2. Start your local server: `python3 -m http.server 8080`
@@ -78,7 +78,7 @@ const config = {
 5. Allow camera/microphone permissions
 6. You should see your video stream!
 
-## 🚨 Common Issues
+## Common Issues
 
 ### "Invalid vendor key" Error
 - Your App ID is incorrect or not properly pasted

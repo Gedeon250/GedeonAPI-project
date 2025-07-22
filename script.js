@@ -251,7 +251,7 @@ function showDemoModeIndicator() {
                 box-shadow: 0 2px 10px rgba(0,0,0,0.3);
                 cursor: pointer;
             " onclick="window.open('https://console.agora.io/', '_blank')">
-                🆓 DEMO MODE - Click here to get FREE Agora credentials (10,000 min/month)
+                 DEMO MODE - Click here to get FREE Agora credentials (10,000 min/month)
             </div>
         `;
         document.body.appendChild(demoIndicator);
@@ -337,11 +337,11 @@ function startDemoMode() {
                     <div class="demo-avatar">🆓</div>
                     <h3>Demo Mode Active</h3>
                     <p><strong>Get FREE Agora credentials!</strong></p>
-                    <p>✅ 10,000 minutes/month FREE</p>
-                    <p>✅ No credit card required</p>
-                    <p>✅ 5 minutes to setup</p>
+                    <p>10,000 minutes/month FREE</p>
+                    <p>No credit card required</p>
+                    <p>5 minutes to setup</p>
                     <a href="https://console.agora.io/" target="_blank" rel="noopener noreferrer" class="demo-link">
-                        🚀 Get Free Credentials Now
+                         Get Free Credentials Now
                     </a>
                     <p class="demo-small">Then update your App ID in script.js</p>
                 </div>
